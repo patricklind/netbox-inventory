@@ -60,12 +60,21 @@ class AssetBulkCreateView(generic.BulkCreateView):
     template_name = 'netbox_inventory/asset_bulk_add.html'
 
     def _create_objects(self, form, request):
+        pattern_values = form.cleaned_data.get('pattern')
+
+        if pattern_values:
+            return self._create_objects_by_tag_pattern(form, request, pattern_values)
+
+        return self._create_objects_by_count(form, request, form.cleaned_data['count'])
+
+    def _create_objects_by_count(self, form, request, count):
         new_objects = []
-        for _ in range(form.cleaned_data['count']):
+        for _ in range(count):
             # Reinstantiate the model form each time to avoid overwriting the same instance. Use a mutable
             # copy of the POST QueryDict so that we can update the target field value.
             model_form = self.model_form(request.POST.copy())
             del model_form.data['count']
+            model_form.data.pop('pattern', None)
 
             # Validate each new object independently.
             if model_form.is_valid():
@@ -73,6 +82,27 @@ class AssetBulkCreateView(generic.BulkCreateView):
                 new_objects.append(obj)
             else:
                 # Raise an IntegrityError to break the for loop and abort the transaction.
+                raise IntegrityError()
+
+        return new_objects
+
+    def _create_objects_by_tag_pattern(self, form, request, pattern_values):
+        new_objects = []
+        for value in pattern_values:
+            model_form = self.model_form(request.POST.copy())
+            del model_form.data['count']
+            model_form.data.pop('pattern', None)
+            # Asset tag is disabled in the bulk-add UI; enable it here so pattern values can be validated & saved.
+            model_form.fields['asset_tag'].disabled = False
+            model_form.data['asset_tag'] = value
+
+            if model_form.is_valid():
+                obj = model_form.save()
+                new_objects.append(obj)
+            else:
+                errors = model_form.errors.as_data()
+                if errors.get('asset_tag'):
+                    form.add_error('pattern', errors['asset_tag'])
                 raise IntegrityError()
 
         return new_objects

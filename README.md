@@ -30,6 +30,20 @@ Inventory item groups can be nested, so you can for example model all pluggables
 as one top-level group with child groups for SFP+ modules, SFP28 modules and so
 on.
 
+### Bulk add asset tag generator
+
+When creating multiple assets via **Assets > Add multiple**, you can now generate
+`asset_tag` values from a pattern.
+
+* Use the **Asset tag pattern** field (for example: `ASSET-[1-3]`).
+* The pattern must expand to the same number of values as **count**.
+* If no pattern is provided, bulk add behaves as before and creates assets without
+  generated asset tags.
+
+> [!NOTE]
+> Pattern expansion follows NetBox's alphanumeric expansion behavior.
+> Example: `ASSET-[001-003]` expands to `ASSET-1`, `ASSET-2`, `ASSET-3`.
+
 ### Automatic management of asset status
 
 Each asset has a status attribute that can indicate use of the asset. These
@@ -194,9 +208,6 @@ will be processed using the object's filterset:
    the changes, the user is returned to the audit flow page and can now mark it as seen.
 3. If no matching object is found, a warning is displayed. The user must manually create
    the object.
-
-> [!TIP]
-> To further speed up this process, you can use a barcode or QR code scanner.
 
 #### Audit Reports
 
