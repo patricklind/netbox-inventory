@@ -224,3 +224,26 @@ class AssetBulkAddTestCase(
         if action == 'add':
             action = 'bulk_add'
         return super()._get_url(action, instance)
+
+    def test_bulk_create_objects_with_asset_tag_pattern(self):
+        obj_perm = ObjectPermission(name='test-asset-bulk-add-pattern', actions=['add'])
+        obj_perm.save()
+        obj_perm.users.add(self.user)
+        obj_perm.object_types.add(ObjectType.objects.get_for_model(self.model))
+
+        form_data = {
+            'count': 3,
+            'pattern': 'ASSET-[001-003]',
+            'status': 'stored',
+            'device_type': DeviceType.objects.first().pk,
+        }
+        request = {
+            'path': self._get_url('add'),
+            'data': post_data(form_data),
+        }
+        self.assertHttpStatus(self.client.post(**request), 302)
+
+        self.assertEqual(
+            list(Asset.objects.order_by('asset_tag').values_list('asset_tag', flat=True)),
+            ['ASSET-1', 'ASSET-2', 'ASSET-3'],
+        )

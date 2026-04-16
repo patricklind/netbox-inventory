@@ -1,5 +1,7 @@
 from django import forms
 
+from utilities.forms.fields import ExpandableNameField
+
 from .models import AssetForm
 
 __all__ = (
@@ -16,6 +18,24 @@ class AssetBulkAddForm(forms.Form):
         required=True,
         help_text='How many assets to create',
     )
+    pattern = ExpandableNameField(
+        label='Asset tag pattern',
+        required=False,
+        help_text='Optional. Supports alphanumeric ranges and must expand to the same number as count.',
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        count = cleaned_data.get('count')
+        pattern = cleaned_data.get('pattern')
+
+        if count and pattern and len(pattern) != count:
+            self.add_error(
+                'pattern',
+                f'Pattern expands to {len(pattern)} values, but count is {count}.',
+            )
+
+        return cleaned_data
 
 
 class AssetBulkAddModelForm(AssetForm):
