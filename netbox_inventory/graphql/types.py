@@ -19,6 +19,7 @@ from tenancy.graphql.types import ContactType, TenantType
 
 from .filters import (
     AssetFilter,
+    AssetRoleFilter,
     DeliveryFilter,
     InventoryItemGroupFilter,
     InventoryItemTypeFilter,
@@ -27,6 +28,7 @@ from .filters import (
 )
 from netbox_inventory.models import (
     Asset,
+    AssetRole,
     Delivery,
     InventoryItemGroup,
     InventoryItemType,
@@ -71,6 +73,21 @@ class AssetType(ImageAttachmentsMixin, NetBoxObjectType):
         | None
     )
 
+@strawberry_django.type(
+    AssetRole, fields='__all__', filters=AssetRoleFilter
+)
+class AssetRoleType(OrganizationalObjectType):
+    parent: (
+        Annotated[
+            'AssetRoleType', strawberry.lazy('netbox_inventory.graphql.types')
+        ]
+        | None
+    )
+    children: list[
+        Annotated[
+            'AssetRoleType', strawberry.lazy('netbox_inventory.graphql.types')
+        ]
+    ]
 
 @strawberry_django.type(Supplier, fields='__all__', filters=SupplierFilter)
 class SupplierType(ContactsMixin, NetBoxObjectType):

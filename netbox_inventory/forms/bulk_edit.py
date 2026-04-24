@@ -17,6 +17,7 @@ from ..models import *
 
 __all__ = (
     'AssetBulkEditForm',
+    'AssetRoleBulkEditForm',
     'AuditFlowBulkEditForm',
     'AuditFlowPageBulkEditForm',
     'AuditFlowPageAssignmentBulkEditForm',
@@ -222,6 +223,35 @@ class AssetBulkEditForm(PrimaryModelBulkEditForm):
         'storage_location',
     )
 
+class AssetRoleBulkEditForm(PrimaryModelBulkEditForm):
+    parent = DynamicModelChoiceField(
+        queryset=AssetRole.objects.all(),
+        required=False,
+        label='Parent Role',
+    )
+    color = forms.CharField(
+        max_length=6,
+        required=False,
+        label='Color',
+    )
+    description = forms.CharField(
+        max_length=200,
+        required=False,
+    )
+
+    model = AssetRole
+    fieldsets = (
+        FieldSet(
+            'parent',
+            'color',
+            'description',
+        ),
+    )
+    nullable_fields = (
+        'parent',
+        'color',
+        'description',
+    )
 
 #
 # Deliveries

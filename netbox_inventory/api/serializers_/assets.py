@@ -16,7 +16,7 @@ from tenancy.api.serializers import ContactSerializer, TenantSerializer
 
 from .deliveries import *
 from .nested import *
-from netbox_inventory.models import Asset, InventoryItemGroup, InventoryItemType
+from netbox_inventory.models import Asset, AssetRole, InventoryItemGroup, InventoryItemType
 
 
 class InventoryItemGroupSerializer(NestedGroupModelSerializer):
@@ -230,3 +230,30 @@ class AssetSerializer(PrimaryModelSerializer):
         # logic to handle validation
         # see  https://www.django-rest-framework.org/api-guide/validators/#optional-fields
         validators = []
+
+class AssetRoleSerializer(NestedGroupModelSerializer):
+    parent = NestedAssetRoleSerializer(
+        required=False, allow_null=True, default=None
+    )
+    asset_count = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = AssetRole
+        fields = (
+            'id',
+            'url',
+            'display',
+            'name',
+            'slug',
+            'parent',
+            'color',
+            'description',
+            'comments',
+            'tags',
+            'custom_fields',
+            'created',
+            'last_updated',
+            'asset_count',
+            '_depth',
+        )
+        brief_fields = ('id', 'url', 'display', 'name', 'description', '_depth')

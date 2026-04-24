@@ -32,6 +32,7 @@ from ..models import *
 
 __all__ = (
     'AssetFilterForm',
+    'AssetRoleFilterForm',
     'AuditFlowFilterForm',
     'AuditFlowPageFilterForm',
     'AuditTrailFilterForm',
@@ -81,6 +82,37 @@ class InventoryItemGroupFilterForm(PrimaryModelFilterSetForm):
     )
     tag = TagFilterField(model)
 
+class AssetRoleFilterForm(PrimaryModelFilterSetForm):
+    model = AssetRole
+    fieldsets = (
+        FieldSet('q', 'filter_id', 'tag', 'owner_id'),
+        FieldSet(
+            'parent_id',
+            'name',
+            'color',
+            'description',
+            name='Attributes',
+        ),
+    )
+    parent_id = DynamicModelMultipleChoiceField(
+        queryset=AssetRole.objects.all(),
+        required=False,
+        null_option='None',
+        label='Parent role',
+    )
+    name = forms.CharField(
+        required=False,
+        label=_('Name'),
+    )
+    color = forms.CharField(
+        required=False,
+        label=_('Color'),
+    )
+    description = forms.CharField(
+        required=False,
+        label=_('Description'),
+    )
+    tag = TagFilterField(model)
 
 class InventoryItemTypeFilterForm(PrimaryModelFilterSetForm):
     model = InventoryItemType
@@ -123,6 +155,7 @@ class AssetFilterForm(PrimaryModelFilterSetForm):
         FieldSet(
             'status',
             'name',
+            'role_id',
             'description',
             'asset_tag',
             name='Attributes',
@@ -186,6 +219,12 @@ class AssetFilterForm(PrimaryModelFilterSetForm):
     serial = forms.CharField(
         required=False,
         label=_('Serial number'),
+    )
+    role_id = DynamicModelMultipleChoiceField(
+        queryset=AssetRole.objects.all(),
+        required=False,
+        null_option='None',
+        label='Asset role',
     )
     kind = forms.MultipleChoiceField(
         choices=HardwareKindChoices,

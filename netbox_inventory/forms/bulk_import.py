@@ -20,6 +20,7 @@ from ..utils import get_plugin_setting
 
 __all__ = (
     'AssetImportForm',
+    'AssetRoleImportForm',
     'AuditFlowImportForm',
     'AuditFlowPageImportForm',
     'AuditTrailImportForm',
@@ -440,6 +441,17 @@ class AssetImportForm(PrimaryModelImportForm):
             self.add_error(field_name, e)
             raise
 
+class AssetRoleImportForm(PrimaryModelImportForm):
+    parent = CSVModelChoiceField(
+        queryset=AssetRole.objects.all(),
+        required=False,
+        to_field_name='name',
+        help_text='Name of parent role',
+    )
+
+    class Meta:
+        model = AssetRole
+        fields = ('name', 'slug', 'parent', 'color', 'description', 'comments', 'tags')
 
 #
 # Deliveries

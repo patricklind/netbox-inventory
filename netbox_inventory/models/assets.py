@@ -146,6 +146,19 @@ class Asset(NamedModel, ImageAttachmentsMixin):
     )
 
     #
+    # Asset role fields
+    #
+    role = models.ForeignKey(
+            to='netbox_inventory.AssetRole',
+            on_delete=models.SET_NULL,
+            related_name='assets',
+            blank=True,
+            null=True,
+            verbose_name='Role',
+            help_text='Functional role of this asset',
+    )
+
+    #
     # hardware type fields
     #
     device_type = models.ForeignKey(

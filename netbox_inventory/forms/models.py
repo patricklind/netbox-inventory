@@ -18,6 +18,7 @@ from ..models import *
 from netbox_inventory.choices import HardwareKindChoices
 
 __all__ = (
+    'AssetRoleForm',
     'AssetForm',
     'AuditFlowForm',
     'AuditFlowPageAssignmentForm',
@@ -64,6 +65,38 @@ class InventoryItemGroupForm(PrimaryModelForm):
             'comments',
         )
 
+class AssetRoleForm(PrimaryModelForm):
+    slug = SlugField(slug_source='name')
+    parent = DynamicModelChoiceField(
+        queryset=AssetRole.objects.all(),
+        required=False,
+        label='Parent Role',
+    )
+
+    fieldsets = (
+        FieldSet(
+            'name',
+            'slug',
+            'parent',
+            'color',
+            'description',
+            'tags',
+            name='Asset Role',
+        ),
+    )
+
+    class Meta:
+        model = AssetRole
+        fields = (
+            'name',
+            'slug',
+            'parent',
+            'color',
+            'description',
+            'owner',
+            'tags',
+            'comments',
+        )
 
 class InventoryItemTypeForm(PrimaryModelForm):
     slug = SlugField(slug_source='model')
@@ -195,9 +228,23 @@ class AssetForm(PrimaryModelForm):
             'site_id': '$storage_site',
         },
     )
+    role = DynamicModelChoiceField(
+        queryset=AssetRole.objects.all(),
+        required=False,
+        null_option='None',
+        label='Role',
+    )
 
     fieldsets = (
-        FieldSet('name', 'asset_tag', 'description', 'tags', 'status', name='General'),
+        FieldSet(
+            'name',
+            'asset_tag',
+            'description',
+            'tags',
+            'status',
+            'role',
+            name='General'
+        ),
         FieldSet(
             'serial',
             'manufacturer',
@@ -227,6 +274,7 @@ class AssetForm(PrimaryModelForm):
             'serial',
             'status',
             'manufacturer',
+            'role',
             'device_type',
             'module_type',
             'inventoryitem_type',
