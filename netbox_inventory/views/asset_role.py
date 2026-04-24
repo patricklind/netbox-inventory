@@ -1,13 +1,14 @@
 from netbox.views import generic
-from utilities.views import register_model_view
-
 from netbox.ui import layout, actions
-from netbox.ui.panels import CommentsPanel, ObjectsTablePanel, RelatedObjectsPanel
-from netbox.ui import actions
-from ..ui.panels import AssetRolePanel
-
+from netbox.ui.panels import (
+    CommentsPanel,
+    ObjectsTablePanel,
+    RelatedObjectsPanel,
+)
+from utilities.views import GetRelatedModelsMixin, register_model_view
 
 from .. import filtersets, forms, models, tables
+from ..ui.panels import AssetRolePanel
 
 __all__ = (
     'AssetRoleView',
@@ -19,8 +20,9 @@ __all__ = (
     'AssetRoleBulkDeleteView',
 )
 
+
 @register_model_view(models.AssetRole)
-class AssetRoleView(generic.ObjectView):
+class AssetRoleView(GetRelatedModelsMixin, generic.ObjectView):
     queryset = models.AssetRole.objects.all()
     layout = layout.SimpleLayout(
         left_panels=[
@@ -43,12 +45,10 @@ class AssetRoleView(generic.ObjectView):
     )
 
     def get_extra_context(self, request, instance):
-        assets = models.Asset.objects.restrict(request.user, 'view').filter(
-            role__in=instance.get_descendants(include_self=True)
-        )
         return {
-            'asset_count': assets.count(),
+            'related_models': self.get_related_models(request, instance),
         }
+
 
 @register_model_view(models.AssetRole, 'list', path='', detail=False)
 class AssetRoleListView(generic.ObjectListView):
