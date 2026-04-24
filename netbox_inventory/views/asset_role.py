@@ -3,12 +3,11 @@ from netbox.ui import layout, actions
 from netbox.ui.panels import (
     CommentsPanel,
     ObjectsTablePanel,
-    RelatedObjectsPanel,
 )
 from utilities.views import GetRelatedModelsMixin, register_model_view
 
 from .. import filtersets, forms, models, tables
-from ..ui.panels import AssetRolePanel
+from ..ui.panels import AssetRolePanel, AssetRoleStatusPanel
 
 __all__ = (
     'AssetRoleView',
@@ -20,7 +19,6 @@ __all__ = (
     'AssetRoleBulkDeleteView',
 )
 
-
 @register_model_view(models.AssetRole)
 class AssetRoleView(GetRelatedModelsMixin, generic.ObjectView):
     queryset = models.AssetRole.objects.all()
@@ -29,7 +27,7 @@ class AssetRoleView(GetRelatedModelsMixin, generic.ObjectView):
             AssetRolePanel(),
         ],
         right_panels=[
-            RelatedObjectsPanel(),
+            AssetRoleStatusPanel(),
             CommentsPanel(),
         ],
         bottom_panels=[
@@ -45,8 +43,26 @@ class AssetRoleView(GetRelatedModelsMixin, generic.ObjectView):
     )
 
     def get_extra_context(self, request, instance):
+        from ..choices import AssetStatusChoices
+
+        assets = models.Asset.objects.restrict(request.user, 'view').filter(
+            role__in=instance.get_descendants(include_self=True)
+        )
+
+        status_counts = {
+            key: {
+                'value': key,
+                'label': label,
+                'color': AssetStatusChoices.colors[key],
+                'count': assets.filter(status=key).count(),
+            }
+            for key, label in list(AssetStatusChoices)
+        }
+
         return {
             'related_models': self.get_related_models(request, instance),
+            'status_counts': status_counts,
+            'asset_count': assets.count(),
         }
 
 
