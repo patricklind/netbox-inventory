@@ -42,3 +42,6 @@ class AssetRole(NestedGroupModel):
 
     def __str__(self):
         return self.name
+
+    def get_color(self):
+        return self.color if self.color else None
