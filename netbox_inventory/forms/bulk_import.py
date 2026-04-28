@@ -112,6 +112,12 @@ class AssetImportForm(PrimaryModelImportForm):
         choices=AssetStatusChoices,
         help_text='Asset lifecycle status.',
     )
+    role = CSVModelChoiceField(
+        queryset=AssetRole.objects.all(),
+        to_field_name='name',
+        required=False,
+        help_text='Role assigned to this asset. It must exist before import.',
+    )
     storage_site = CSVModelChoiceField(
         queryset=Site.objects.all(),
         to_field_name='name',
@@ -181,6 +187,7 @@ class AssetImportForm(PrimaryModelImportForm):
             'asset_tag',
             'serial',
             'status',
+            'role',
             'description',
             'hardware_kind',
             'manufacturer',
