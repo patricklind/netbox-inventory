@@ -1,9 +1,9 @@
-from netbox.views import generic
-from netbox.ui import layout, actions
+from netbox.ui import actions, layout
 from netbox.ui.panels import (
     CommentsPanel,
     ObjectsTablePanel,
 )
+from netbox.views import generic
 from utilities.views import GetRelatedModelsMixin, register_model_view
 
 from .. import filtersets, forms, models, tables

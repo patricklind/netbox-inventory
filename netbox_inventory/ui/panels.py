@@ -1,4 +1,5 @@
-from netbox.ui import panels, attrs
+from netbox.ui import attrs, panels
+
 from netbox_inventory.choices import AssetStatusChoices
 from netbox_inventory.models import Asset
 
@@ -33,7 +34,7 @@ def render(self, context):
         from django.template.loader import render_to_string
         request = context.get('request')
         if request is None:
-            # fallback 
+            # fallback
             try:
                 request = context['view'].request
             except (KeyError, AttributeError):

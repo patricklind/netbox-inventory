@@ -1,6 +1,7 @@
 import strawberry_django
-from netbox.graphql.filters import BaseModelFilter
 from strawberry_django.filters import FilterLookup
+
+from netbox.graphql.filters import BaseModelFilter
 
 from netbox_inventory import models
 
