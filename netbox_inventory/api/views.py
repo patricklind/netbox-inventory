@@ -9,6 +9,7 @@ from .serializers import *
 
 __all__ = (
     'AssetViewSet',
+    'AssetRoleViewSet',
     'AuditFlowPageAssignmentViewSet',
     'AuditFlowPageViewSet',
     'AuditFlowViewSet',
@@ -95,6 +96,16 @@ class InventoryItemAssetViewSet(InventoryItemViewSet):
 
     filterset_class = filtersets.InventoryItemAssetFilterSet
 
+class AssetRoleViewSet(NetBoxModelViewSet):
+    queryset = models.AssetRole.objects.add_related_count(
+        models.AssetRole.objects.all(),
+        models.Asset,
+        'role',
+        'asset_count',
+        cumulative=True,
+    ).prefetch_related('tags')
+    serializer_class = AssetRoleSerializer
+    filterset_class = filtersets.AssetRoleFilterSet
 
 #
 # Deliveries

@@ -14,9 +14,9 @@ from dcim.api.serializers import (
 from netbox.api.serializers import NestedGroupModelSerializer, PrimaryModelSerializer
 from tenancy.api.serializers import ContactSerializer, TenantSerializer
 
+from netbox_inventory.models import Asset, AssetRole, InventoryItemGroup, InventoryItemType
 from .deliveries import *
 from .nested import *
-from netbox_inventory.models import Asset, InventoryItemGroup, InventoryItemType
 
 
 class InventoryItemGroupSerializer(NestedGroupModelSerializer):
@@ -83,6 +83,32 @@ class InventoryItemTypeSerializer(PrimaryModelSerializer):
             'description',
         )
 
+class AssetRoleSerializer(NestedGroupModelSerializer):
+    parent = NestedAssetRoleSerializer(
+        required=False, allow_null=True, default=None
+    )
+    asset_count = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = AssetRole
+        fields = (
+            'id',
+            'url',
+            'display',
+            'name',
+            'slug',
+            'parent',
+            'color',
+            'description',
+            'comments',
+            'tags',
+            'custom_fields',
+            'created',
+            'last_updated',
+            'asset_count',
+            '_depth',
+        )
+        brief_fields = ('id', 'url', 'display', 'name', 'description', '_depth')
 
 class AssetSerializer(PrimaryModelSerializer):
     device_type = DeviceTypeSerializer(
@@ -169,6 +195,12 @@ class AssetSerializer(PrimaryModelSerializer):
         allow_null=True,
         default=None,
     )
+    role = AssetRoleSerializer(
+        nested=True,
+        required=False,
+        allow_null=True,
+        default=None,
+    )
 
     def to_internal_value(self, data):
         ret = super().to_internal_value(data)
@@ -193,6 +225,7 @@ class AssetSerializer(PrimaryModelSerializer):
             'serial',
             'status',
             'kind',
+            'role',
             'device_type',
             'device',
             'module_type',

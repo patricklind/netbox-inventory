@@ -1,11 +1,12 @@
 import strawberry_django
-
 from netbox.graphql.filters import BaseModelFilter
+from strawberry_django.filters import FilterLookup
 
 from netbox_inventory import models
 
 __all__ = (
     'AssetFilter',
+    'AssetRoleFilter',
     'SupplierFilter',
     'PurchaseFilter',
     'DeliveryFilter',
@@ -18,6 +19,10 @@ __all__ = (
 class AssetFilter(BaseModelFilter):
     pass
 
+@strawberry_django.filter(models.AssetRole, lookups=True)
+class AssetRoleFilter(BaseModelFilter):
+    name: FilterLookup[str] | None = strawberry_django.filter_field()
+    slug: FilterLookup[str] | None = strawberry_django.filter_field()
 
 @strawberry_django.filter(models.Supplier, lookups=True)
 class SupplierFilter(BaseModelFilter):

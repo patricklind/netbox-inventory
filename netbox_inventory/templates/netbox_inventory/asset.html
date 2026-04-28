@@ -39,6 +39,16 @@
             <td>{% badge object.get_status_display bg_color=object.get_status_color %}</td>
           </tr>
           <tr>
+            <th scope="row">Role</th>
+            <td>
+              {% if object.role %}
+                  {% badge object.role.name hex_color=object.role.color url=object.role.get_absolute_url %}
+              {% else %}
+                —
+              {% endif %}
+            </td>
+          </tr>
+          <tr>
             <th scope="row">{{ object.get_kind_display }} Type</th>
             <td><a href="{{object.hardware_type.get_absolute_url}}">{{ object.hardware_type.manufacturer }} {{ object.hardware_type }}</a></td>
           </tr>

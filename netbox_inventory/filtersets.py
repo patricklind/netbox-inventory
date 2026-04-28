@@ -34,6 +34,7 @@ from .utils import get_asset_custom_fields_search_filters, query_located
 
 __all__ = (
     'AssetFilterSet',
+    'AssetRoleFilterSet',
     'AuditFlowFilterSet',
     'AuditFlowPageFilterSet',
     'AuditTrailFilterSet',
@@ -79,6 +80,32 @@ class InventoryItemGroupFilterSet(PrimaryModelFilterSet):
         query = Q(Q(name__icontains=value) | Q(description__icontains=value))
         return queryset.filter(query)
 
+@register_filterset
+class AssetRoleFilterSet(PrimaryModelFilterSet):
+    parent_id = django_filters.ModelMultipleChoiceFilter(
+        queryset=AssetRole.objects.all(),
+        label='Parent role (ID)',
+    )
+    ancestor_id = filters.TreeNodeMultipleChoiceFilter(
+        queryset=AssetRole.objects.all(),
+        field_name='parent',
+        lookup_expr='in',
+        label='Asset role ancestor (ID)',
+    )
+
+    class Meta:
+        model = AssetRole
+        fields = (
+            'id',
+            'name',
+            'slug',
+            'color',
+            'description',
+        )
+
+    def search(self, queryset, name, value):
+        query = Q(name__icontains=value) | Q(description__icontains=value)
+        return queryset.filter(query)
 
 @register_filterset
 class InventoryItemTypeFilterSet(PrimaryModelFilterSet):
@@ -125,6 +152,17 @@ class InventoryItemTypeFilterSet(PrimaryModelFilterSet):
 class AssetFilterSet(PrimaryModelFilterSet):
     status = django_filters.MultipleChoiceFilter(
         choices=AssetStatusChoices,
+    )
+    role_id = filters.TreeNodeMultipleChoiceFilter(
+        field_name='role',
+        queryset=AssetRole.objects.all(),
+        lookup_expr='in',
+        label='Asset role (ID)',
+    )
+    role = filters.MultiValueCharFilter(
+        field_name='role__slug',
+        lookup_expr='iexact',
+        label='Asset role (slug)',
     )
     kind = filters.MultiValueCharFilter(
         method='filter_kind',
@@ -419,6 +457,8 @@ class AssetFilterSet(PrimaryModelFilterSet):
             'name',
             'serial',
             'asset_tag',
+            'role',
+            'role_id',
             'description',
             'warranty_start',
             'warranty_end',
