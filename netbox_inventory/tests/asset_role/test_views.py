@@ -1,4 +1,4 @@
-from utilities.testing import ViewTestCases, create_tags
+from utilities.testing import ViewTestCases
 
 from netbox_inventory.models import AssetRole
 from netbox_inventory.tests.custom import ModelViewTestCase
