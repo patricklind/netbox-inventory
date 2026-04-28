@@ -90,6 +90,11 @@ class AssetBulkEditForm(PrimaryModelBulkEditForm):
         required=False,
         initial='',
     )
+    role = DynamicModelChoiceField(
+        queryset=AssetRole.objects.all(),
+        required=False,
+        label='Role',
+    )
     device_type = DynamicModelChoiceField(
         queryset=DeviceType.objects.all(),
         required=False,
@@ -176,6 +181,7 @@ class AssetBulkEditForm(PrimaryModelBulkEditForm):
         FieldSet(
             'name',
             'status',
+            'role',
             'description',
             name='General',
         ),
@@ -209,6 +215,7 @@ class AssetBulkEditForm(PrimaryModelBulkEditForm):
     )
     nullable_fields = (
         'name',
+        'role',
         'description',
         'device',
         'module',
