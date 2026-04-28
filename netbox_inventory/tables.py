@@ -144,9 +144,8 @@ class AssetTable(PrimaryModelTable):
         linkify=True,
         order_by=('device', 'module'),
     )
-    role = tables.Column(
-        linkify=True,
-        verbose_name='Role',
+    role = columns.ColoredLabelColumn(
+        verbose_name=_('Role'),
     )
     hardware_role = tables.Column(
         accessor=columns.Accessor('hardware__role'),
