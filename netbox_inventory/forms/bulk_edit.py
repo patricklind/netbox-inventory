@@ -17,6 +17,7 @@ from ..models import *
 
 __all__ = (
     'AssetBulkEditForm',
+    'AssetRoleBulkEditForm',
     'AuditFlowBulkEditForm',
     'AuditFlowPageBulkEditForm',
     'AuditFlowPageAssignmentBulkEditForm',
@@ -88,6 +89,11 @@ class AssetBulkEditForm(PrimaryModelBulkEditForm):
         choices=add_blank_choice(AssetStatusChoices),
         required=False,
         initial='',
+    )
+    role = DynamicModelChoiceField(
+        queryset=AssetRole.objects.all(),
+        required=False,
+        label='Role',
     )
     device_type = DynamicModelChoiceField(
         queryset=DeviceType.objects.all(),
@@ -175,6 +181,7 @@ class AssetBulkEditForm(PrimaryModelBulkEditForm):
         FieldSet(
             'name',
             'status',
+            'role',
             'description',
             name='General',
         ),
@@ -208,6 +215,7 @@ class AssetBulkEditForm(PrimaryModelBulkEditForm):
     )
     nullable_fields = (
         'name',
+        'role',
         'description',
         'device',
         'module',
@@ -222,6 +230,35 @@ class AssetBulkEditForm(PrimaryModelBulkEditForm):
         'storage_location',
     )
 
+class AssetRoleBulkEditForm(PrimaryModelBulkEditForm):
+    parent = DynamicModelChoiceField(
+        queryset=AssetRole.objects.all(),
+        required=False,
+        label='Parent Role',
+    )
+    color = forms.CharField(
+        max_length=6,
+        required=False,
+        label='Color',
+    )
+    description = forms.CharField(
+        max_length=200,
+        required=False,
+    )
+
+    model = AssetRole
+    fieldsets = (
+        FieldSet(
+            'parent',
+            'color',
+            'description',
+        ),
+    )
+    nullable_fields = (
+        'parent',
+        'color',
+        'description',
+    )
 
 #
 # Deliveries

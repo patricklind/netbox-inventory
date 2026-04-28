@@ -20,6 +20,7 @@ from ..utils import get_plugin_setting
 
 __all__ = (
     'AssetImportForm',
+    'AssetRoleImportForm',
     'AuditFlowImportForm',
     'AuditFlowPageImportForm',
     'AuditTrailImportForm',
@@ -111,6 +112,12 @@ class AssetImportForm(PrimaryModelImportForm):
         choices=AssetStatusChoices,
         help_text='Asset lifecycle status.',
     )
+    role = CSVModelChoiceField(
+        queryset=AssetRole.objects.all(),
+        to_field_name='name',
+        required=False,
+        help_text='Role assigned to this asset. It must exist before import.',
+    )
     storage_site = CSVModelChoiceField(
         queryset=Site.objects.all(),
         to_field_name='name',
@@ -180,6 +187,7 @@ class AssetImportForm(PrimaryModelImportForm):
             'asset_tag',
             'serial',
             'status',
+            'role',
             'description',
             'hardware_kind',
             'manufacturer',
@@ -440,6 +448,17 @@ class AssetImportForm(PrimaryModelImportForm):
             self.add_error(field_name, e)
             raise
 
+class AssetRoleImportForm(PrimaryModelImportForm):
+    parent = CSVModelChoiceField(
+        queryset=AssetRole.objects.all(),
+        required=False,
+        to_field_name='name',
+        help_text='Name of parent role',
+    )
+
+    class Meta:
+        model = AssetRole
+        fields = ('name', 'slug', 'parent', 'color', 'description', 'comments', 'tags')
 
 #
 # Deliveries

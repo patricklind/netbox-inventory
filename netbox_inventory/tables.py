@@ -16,6 +16,7 @@ from .models import *
 from .template_content import WARRANTY_PROGRESSBAR
 
 __all__ = (
+    'AssetRoleTable',
     'AssetTable',
     'AuditFlowPageAssignmentTable',
     'AuditFlowPageTable',
@@ -142,6 +143,9 @@ class AssetTable(PrimaryModelTable):
     hardware = tables.Column(
         linkify=True,
         order_by=('device', 'module'),
+    )
+    role = columns.ColoredLabelColumn(
+        verbose_name=_('Role'),
     )
     hardware_role = tables.Column(
         accessor=columns.Accessor('hardware__role'),
@@ -355,6 +359,7 @@ class AssetTable(PrimaryModelTable):
             'pk',
             'id',
             'name',
+            'role',
             'asset_tag',
             'serial',
             'status',
@@ -395,6 +400,7 @@ class AssetTable(PrimaryModelTable):
             'name',
             'serial',
             'kind',
+            'role',
             'manufacturer',
             'hardware_type',
             'asset_tag',
@@ -403,6 +409,39 @@ class AssetTable(PrimaryModelTable):
             'tags',
         )
 
+class AssetRoleTable(PrimaryModelTable):
+    name = columns.MPTTColumn(
+        linkify=True,
+    )
+    color = columns.ColorColumn()
+    asset_count = columns.LinkedCountColumn(
+        viewname='plugins:netbox_inventory:asset_list',
+        url_params={'role_id': 'pk'},
+        verbose_name='Assets',
+    )
+    tags = columns.TagColumn()
+
+    class Meta(NetBoxTable.Meta):
+        model = AssetRole
+        fields = (
+            'pk',
+            'id',
+            'name',
+            'slug',
+            'color',
+            'description',
+            'asset_count',
+            'tags',
+            'created',
+            'last_updated',
+            'actions',
+        )
+        default_columns = (
+            'name',
+            'color',
+            'asset_count',
+            'description',
+        )
 
 #
 # Deliveries

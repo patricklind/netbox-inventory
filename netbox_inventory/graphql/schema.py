@@ -1,21 +1,23 @@
 import strawberry
 import strawberry_django
 
-from .types import (
-    AssetType,
-    DeliveryType,
-    InventoryItemGroupType,
-    InventoryItemTypeType,
-    PurchaseType,
-    SupplierType,
-)
 from netbox_inventory.models import (
     Asset,
+    AssetRole,
     Delivery,
     InventoryItemGroup,
     InventoryItemType,
     Purchase,
     Supplier,
+)
+from .types import (
+    AssetType,
+    AssetRoleType,
+    DeliveryType,
+    InventoryItemGroupType,
+    InventoryItemTypeType,
+    PurchaseType,
+    SupplierType,
 )
 
 
@@ -27,6 +29,13 @@ class AssetQuery:
 
     asset_list: list[AssetType] = strawberry_django.field()
 
+@strawberry.type
+class AssetRoleQuery:
+    @strawberry.field
+    def asset_role(self, id: int) -> AssetRoleType:
+        return AssetRole.objects.get(pk=id)
+
+    asset_role_list: list[AssetRoleType] = strawberry_django.field()
 
 @strawberry.type
 class SupplierQuery:

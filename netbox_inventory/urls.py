@@ -77,6 +77,15 @@ urlpatterns = (
         views.AssetRackReassignView.as_view(),
         name='asset_rack_reassign',
     ),
+    # Asset Roles
+    path(
+        'asset-roles/',
+        include(get_model_urls('netbox_inventory', 'assetrole', detail=False)),
+    ),
+    path(
+        'asset-roles/<int:pk>/',
+        include(get_model_urls('netbox_inventory', 'assetrole')),
+    ),
     # Suppliers
     path(
         'suppliers/',

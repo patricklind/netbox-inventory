@@ -54,12 +54,33 @@ asset_buttons = [
     ),
 ]
 
+assetrole_buttons = [
+    PluginMenuButton(
+        link='plugins:netbox_inventory:assetrole_add',
+        title='Add',
+        icon_class='mdi mdi-plus-thick',
+        permissions=['netbox_inventory.add_assetrole'],
+    ),
+    PluginMenuButton(
+        link='plugins:netbox_inventory:assetrole_bulk_import',
+        title='Import',
+        icon_class='mdi mdi-upload',
+        permissions=['netbox_inventory.add_assetrole'],
+    ),
+]
+
 assets_items = (
     PluginMenuItem(
         link='plugins:netbox_inventory:asset_list',
         link_text='Assets',
         permissions=['netbox_inventory.view_asset'],
         buttons=asset_buttons,
+    ),
+    PluginMenuItem(
+        link='plugins:netbox_inventory:assetrole_list',
+        link_text='Asset Roles',
+        permissions=['netbox_inventory.view_assetrole'],
+        buttons=assetrole_buttons,
     ),
     PluginMenuItem(
         link='plugins:netbox_inventory:inventoryitemtype_list',
