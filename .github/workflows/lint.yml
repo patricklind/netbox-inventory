@@ -12,6 +12,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@main
 
-      - uses: astral-sh/ruff-action@v3
+      - uses: astral-sh/ruff-action@v4
         with:
           src: "./netbox_inventory"

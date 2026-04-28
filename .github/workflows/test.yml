@@ -41,7 +41,7 @@ jobs:
           python-version: "3.12"
 
       - name: Checkout netbox ${{ matrix.netbox-version }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: "netbox-community/netbox"
           ref: ${{ matrix.netbox-version }}
